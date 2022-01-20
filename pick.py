@@ -69,26 +69,38 @@ def qualified(course):
         return True
     return False
 
+def time(course):
+    day = ['一','二','三','四','五','六']
+    clock = ['1','2','3','4','5','6','7','8','9','0','A','B','C','D']
+    answerset = set()
+    length = len(course[7])
+    for i in range (length):
+        if (course[7][i] in clock):
+            if (i != length-1):
+                if (course[7][i+1] in clock):
+                    continue
+            temp = i
+            while (course[7][temp] not in day):
+                temp -= 1
+            answerset.add((course[7][temp] + course[7][i]))
+    return answerset
+
 def repeated(course,success):
     chinese = []
     number = []
-    for word in ['一','二','三','四','五']:
-        if (course[7].find(word) != -1):
-            chinese.append(word)
-    for word in ['0','1','2','3','4','5','6','7','8','9']:
-        if (course[7].find(word) != -1):
-            number.append(word)
+    when = []
+    length = len(course[7])
     for i in range (len(success)):
         if (course[2] == success[i][2]):
             return True
-        for word1 in chinese:
-            for word2 in number:
-                if (success[i][7].find(word1) != -1) and (success[i][7].find(word2) != -1):
-                    return True
+        if ((int(course[1]) > 97000) and (int(course[1]) < 97200) and (int(success[i][1]) > 97000) and (int(success[i][1]) < 97200)):
+            return True
+        if (time(course) & time(success[i]) != set({})):
+            return True
     return False
     
 if __name__ == '__main__':
-    myfile = open('lesson.txt')
+    myfile = open('lesson.txt',encoding="utf-8")
     data = myfile.read()
     context = bs4.BeautifulSoup(data,"html.parser")
     courses = makelist(context)
@@ -112,7 +124,7 @@ if __name__ == '__main__':
     print('學分數：',credit)
 
     '''
-    print("以下是你選上，但錄取更高志願的課：")
+    print("\n\n\n以下是你選上，但錄取更高志願的課：")
     for i in range (len(success2)):
         print(success2[i])
     '''
